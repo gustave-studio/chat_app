@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState, useEffect} from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -31,15 +31,19 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function SignIn() {
+export default function SignIn({ setName }) {
+  const [disabled, setDisabled] = useState(true)
+  const [string, setString] = useState('');
+
+  useEffect(() => {
+    const disabled = string === ''
+    setDisabled(disabled)
+  }, [string]);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     // eslint-disable-next-line no-console
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
   };
 
   return (
@@ -66,12 +70,17 @@ export default function SignIn() {
               label="ニックネーム"
               name="name"
               autoFocus
+              onChange={(e) => setString(e.target.value)}
             />
             <Button
-              type="submit"
+              type="button"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={disabled}
+              onClick={() => {
+                setName(string);
+              }}
             >
               はじめる
             </Button>
