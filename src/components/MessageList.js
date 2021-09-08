@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from 'react';
+import { List } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { messagesRef } from '../firebase';
+import MessageItem from './MessageItem';
+import { auto } from '@popperjs/core';
 
 const useStyles = makeStyles({
     root: {
       gridRow: 1,
+      overflow: auto,
+      width: '100%'
     }
 })
 
-const MessageList = () => {
+const MessageList = (key) => {
   const [messages, setMessages] = useState([]);
   const classes = useStyles();
 
   useEffect(() => {
-    messagesRef.orderByKey().limitToLast(3).on('value', (snapshot) => {
+    messagesRef.orderByKey().limitToLast(15).on('value', (snapshot) => {
         const messages = snapshot.val();
         if (messages === null) return;
         const entries = Object.entries(messages);
@@ -26,7 +31,15 @@ const MessageList = () => {
       });
   }, [])
 
-  return <div className={classes.root}>MessageList</div>;
+  return (
+    <List className={classes.root}>
+      {
+        messages.map(({key, name, text}) => {
+          return <MessageItem key={key} name={name} text={text}></MessageItem>
+        })
+      }
+    </List>
+  );
 };
 
 export default MessageList;
